@@ -25,7 +25,7 @@
   ],
   "require": {
     "d3/oxlogiq": "^1.2",
-    "sentry/sentry": "^4",
+    "sentry/sentry": "^4"
   },
   "require-dev": {
     "d3/testingtools": "^1.2",

@@ -2,6 +2,10 @@ services:
   _defaults:
     autowire: true
 
+  D3\OxLogIQ_Sentry\Interfaces\ConfigurationInterface:
+    class: D3\OxLogIQ_Sentry\Configuration
+    public: true
+
   D3\OxLogIQ_Sentry\Providers\SentryHandlerProvider:
     tags:
       - { name: oxlogiq.provider, priority: 100 }

@@ -19,12 +19,11 @@ namespace D3\OxLogIQ_Sentry\Providers;
 
 use D3\LoggerFactory\LoggerFactory;
 use D3\OxLogIQ\Interfaces\ProviderInterface;
-use D3\OxLogIQ\MonologConfiguration;
+use D3\OxLogIQ_Sentry\Interfaces\ConfigurationInterface;
 use D3\OxLogIQ_Sentry\Processors\SentryExceptionProcessor;
+use Exception;
 use Monolog\Logger;
 use OxidEsales\EshopCommunity\Internal\Framework\Logger\Configuration\MonologConfigurationInterface;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Sentry\Monolog\BreadcrumbHandler;
 use Sentry\Monolog\Handler;
 use Sentry\SentrySdk;
@@ -33,11 +32,10 @@ use function Sentry\init;
 
 class SentryHandlerProvider implements ProviderInterface
 {
-    /**
-     * @param MonologConfiguration         $configuration
-     */
-    public function __construct(protected MonologConfigurationInterface $configuration)
-    {
+    public function __construct(
+        protected MonologConfigurationInterface $monologConfiguration,
+        protected ConfigurationInterface $configuration
+    ){
     }
 
     public function register(LoggerFactory $factory): void
@@ -52,17 +50,17 @@ class SentryHandlerProvider implements ProviderInterface
                         Logger::INFO
                     ))
                 )->setLogOnErrorOnly(
-                    $this->configuration->getLogLevel()
+                    $this->monologConfiguration->getLogLevel()
                 );
 
                 $factory->addOtherHandler(
                     (new Handler(
                         SentrySdk::getCurrentHub(),
-                        Logger::toMonologLevel($this->configuration->getLogLevel())
+                        Logger::toMonologLevel($this->monologConfiguration->getLogLevel())
                     ))
                         ->pushProcessor(new SentryExceptionProcessor())
                 )->setBuffering();
-            } catch (NotFoundExceptionInterface|ContainerExceptionInterface $exception) {
+            } catch (Exception $exception) {
                 error_log('OxLogIQ: '.$exception->getMessage());
             }
         }
