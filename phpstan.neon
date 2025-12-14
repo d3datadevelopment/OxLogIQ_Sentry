@@ -1,0 +1,8 @@
+parameters:
+  paths:
+    - .
+  excludePaths:
+    - Tests
+  level: 8
+  phpVersion: 80000
+

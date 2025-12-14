@@ -1,0 +1,7 @@
+services:
+  _defaults:
+    autowire: true
+
+  D3\OxLogIQ_Sentry\Providers\SentryHandlerProvider:
+    tags:
+      - { name: oxlogiq.provider, priority: 100 }
