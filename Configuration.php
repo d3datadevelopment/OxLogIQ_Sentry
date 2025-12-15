@@ -84,7 +84,7 @@ class Configuration implements ConfigurationInterface
 
     protected function beforeSendToSentry(): callable
     {
-        return function (SentryEvent $event): ? SentryEvent {
+        return function (SentryEvent $event): ?SentryEvent {
             return $event;
         };
     }

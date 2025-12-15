@@ -35,7 +35,7 @@ class SentryHandlerProvider implements ProviderInterface
     public function __construct(
         protected MonologConfigurationInterface $monologConfiguration,
         protected ConfigurationInterface $configuration
-    ){
+    ) {
     }
 
     public function register(LoggerFactory $factory): void
