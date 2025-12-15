@@ -41,28 +41,24 @@ class SentryHandlerProvider implements ProviderInterface
     public function register(LoggerFactory $factory): void
     {
         if ($this->configuration->hasSentryDsn()) {
-            try {
-                init($this->configuration->getSentryOptions());
+            init($this->configuration->getSentryOptions());
 
-                $factory->addOtherHandler(
-                    (new BreadcrumbHandler(
-                        SentrySdk::getCurrentHub(),
-                        Logger::INFO
-                    ))
-                )->setLogOnErrorOnly(
-                    $this->monologConfiguration->getLogLevel()
-                );
+            $factory->addOtherHandler(
+                (new BreadcrumbHandler(
+                    SentrySdk::getCurrentHub(),
+                    Logger::INFO
+                ))
+            )->setLogOnErrorOnly(
+                $this->monologConfiguration->getLogLevel()
+            );
 
-                $factory->addOtherHandler(
-                    (new Handler(
-                        SentrySdk::getCurrentHub(),
-                        Logger::toMonologLevel($this->monologConfiguration->getLogLevel())
-                    ))
-                        ->pushProcessor(new SentryExceptionProcessor())
-                )->setBuffering();
-            } catch (Exception $exception) {
-                error_log('OxLogIQ: '.$exception->getMessage());
-            }
+            $factory->addOtherHandler(
+                (new Handler(
+                    SentrySdk::getCurrentHub(),
+                    Logger::toMonologLevel($this->monologConfiguration->getLogLevel())
+                ))
+                    ->pushProcessor(new SentryExceptionProcessor())
+            )->setBuffering();
         }
     }
 }
