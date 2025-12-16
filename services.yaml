@@ -2,9 +2,17 @@ services:
   _defaults:
     autowire: true
 
+  oxlogiq_sentry.oxid.ConfigFile:
+    class: OxidEsales\Facts\Config\ConfigFile
+    factory:  'oxNew'
+    arguments:
+      - OxidEsales\Facts\Config\ConfigFile
+
   D3\OxLogIQ_Sentry\Interfaces\ConfigurationInterface:
     class: D3\OxLogIQ_Sentry\Configuration
     public: true
+    arguments:
+      $factsConfigFile: '@oxlogiq_sentry.oxid.ConfigFile'
 
   D3\OxLogIQ_Sentry\Providers\SentryHandlerProvider:
     tags:

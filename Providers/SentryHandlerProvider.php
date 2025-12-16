@@ -21,7 +21,6 @@ use D3\LoggerFactory\LoggerFactory;
 use D3\OxLogIQ\Interfaces\ProviderInterface;
 use D3\OxLogIQ_Sentry\Interfaces\ConfigurationInterface;
 use D3\OxLogIQ_Sentry\Processors\SentryExceptionProcessor;
-use Exception;
 use Monolog\Logger;
 use OxidEsales\EshopCommunity\Internal\Framework\Logger\Configuration\MonologConfigurationInterface;
 use Sentry\Monolog\BreadcrumbHandler;
@@ -32,6 +31,9 @@ use function Sentry\init;
 
 class SentryHandlerProvider implements ProviderInterface
 {
+    /**
+     * @codeCoverageIgnore
+     */
     public function __construct(
         protected MonologConfigurationInterface $monologConfiguration,
         protected ConfigurationInterface $configuration
@@ -57,7 +59,7 @@ class SentryHandlerProvider implements ProviderInterface
                     SentrySdk::getCurrentHub(),
                     Logger::toMonologLevel($this->monologConfiguration->getLogLevel())
                 ))
-                    ->pushProcessor(new SentryExceptionProcessor())
+                ->pushProcessor(new SentryExceptionProcessor())
             )->setBuffering();
         }
     }

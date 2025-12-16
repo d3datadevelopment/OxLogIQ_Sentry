@@ -28,11 +28,13 @@ class Configuration implements ConfigurationInterface
 {
     public const CONFIGVAR_SENTRY_DSN       = 'oxlogiq_sentryDsn';
 
-    protected ConfigFile $factsConfigFile;
-
-    public function __construct(protected ReleaseServiceInterface $releaseService)
-    {
-        $this->factsConfigFile = new ConfigFile();
+    /**
+     * @codeCoverageIgnore
+     */
+    public function __construct(
+        protected ReleaseServiceInterface $releaseService,
+        protected ConfigFile $factsConfigFile
+    ) {
     }
 
     public function hasSentryDsn(): bool
