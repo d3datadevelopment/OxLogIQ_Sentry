@@ -16,4 +16,4 @@ services:
 
   D3\OxLogIQ_Sentry\Providers\SentryHandlerProvider:
     tags:
-      - { name: oxlogiq.provider, priority: 100 }
+      - { name: oxlogiq.provider, default_priority_method: getPriority }

@@ -63,4 +63,9 @@ class SentryHandlerProvider implements ProviderInterface
             )->setBuffering();
         }
     }
+
+    public static function getPriority(): int
+    {
+        return 100;
+    }
 }
