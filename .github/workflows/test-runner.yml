@@ -57,7 +57,7 @@ jobs:
           oxid_ref: ${{ matrix.oxid_ref }}
           phpunit_version: "^9 || ^10"     # v11 kills Github Action
           sourceguardian: "FALSE"
-          composer_package_name: "d3/oxlogiq_http_api"
+          composer_package_name: "d3/oxlogiq_sentry"
           test_suites: "unit"
           syntax_check_paths: "."
 
