@@ -33,7 +33,7 @@ use ReflectionException;
 #[Small]
 #[CoversMethod(Provider::class, 'isActive')]
 #[CoversMethod(Provider::class, 'provide')]
-class SentryHandlerProviderTest extends TestCase
+class ProviderTest extends TestCase
 {
     use CanAccessRestricted;
 
@@ -100,6 +100,6 @@ class SentryHandlerProviderTest extends TestCase
             ->getMock();
         $factoryMock->expects(self::exactly(2))->method('addOtherHandler');
 
-        $this->callMethod($sut, 'register', [$factoryMock]);
+        $this->callMethod($sut, 'provide', [$factoryMock]);
     }
 }
