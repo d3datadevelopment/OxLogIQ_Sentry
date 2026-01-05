@@ -44,6 +44,7 @@ class ConfigurationTest extends TestCase
 
     /**
      * @throws ReflectionException
+     * @dataProvider hasSentryDsnDataProvider
      */
     #[Test]
     #[DataProvider('hasSentryDsnDataProvider')]
@@ -73,7 +74,7 @@ class ConfigurationTest extends TestCase
         );
     }
 
-    public static function HasSentryDsnDataProvider(): Generator
+    public static function hasSentryDsnDataProvider(): Generator
     {
         yield 'not set' => [null, false, null];
         yield 'set' => ['dsnFixture', true, 'dsnFixture'];
@@ -127,6 +128,9 @@ class ConfigurationTest extends TestCase
         );
     }
 
+    /**
+     * @dataProvider getSentryTracesSampleRateDataProvider
+     */
     #[Test]
     #[DataProvider('getSentryTracesSampleRateDataProvider')]
     public function testGetSentryTracesSampleRate(bool $parentSampled, $expected): void
