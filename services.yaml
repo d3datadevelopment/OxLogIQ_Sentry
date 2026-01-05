@@ -14,6 +14,6 @@ services:
     arguments:
       $factsConfigFile: '@oxlogiq_sentry.oxid.ConfigFile'
 
-  D3\OxLogIQ_Sentry\Providers\SentryHandlerProvider:
+  D3\OxLogIQ_Sentry\Providers\Handlers\Provider:
     tags:
       - { name: oxlogiq.provider, default_priority_method: getPriority }
