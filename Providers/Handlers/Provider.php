@@ -15,7 +15,7 @@
 
 declare(strict_types=1);
 
-namespace D3\OxLogIQ_Sentry\Providers;
+namespace D3\OxLogIQ_Sentry\Providers\Handlers;
 
 use D3\LoggerFactory\LoggerFactory;
 use D3\OxLogIQ\Interfaces\ProviderInterface;
@@ -29,7 +29,7 @@ use Sentry\SentrySdk;
 
 use function Sentry\init;
 
-class SentryHandlerProvider implements ProviderInterface
+class Provider implements ProviderInterface
 {
     /**
      * @codeCoverageIgnore
@@ -40,28 +40,31 @@ class SentryHandlerProvider implements ProviderInterface
     ) {
     }
 
-    public function register(LoggerFactory $factory): void
+    public function isActive(): bool
     {
-        if ($this->configuration->hasSentryDsn()) {
-            init($this->configuration->getSentryOptions());
+        return $this->configuration->hasSentryDsn();
+    }
 
-            $factory->addOtherHandler(
-                (new BreadcrumbHandler(
-                    SentrySdk::getCurrentHub(),
-                    Logger::INFO
-                ))
-            )->setLogOnErrorOnly(
-                $this->monologConfiguration->getLogLevel()
-            );
+    public function provide(LoggerFactory $factory): void
+    {
+        init($this->configuration->getSentryOptions());
 
-            $factory->addOtherHandler(
-                (new Handler(
-                    SentrySdk::getCurrentHub(),
-                    Logger::toMonologLevel($this->monologConfiguration->getLogLevel())
-                ))
+        $factory->addOtherHandler(
+            (new BreadcrumbHandler(
+                SentrySdk::getCurrentHub(),
+                Logger::INFO
+            ))
+        )->setLogOnErrorOnly(
+            $this->monologConfiguration->getLogLevel()
+        );
+
+        $factory->addOtherHandler(
+            (new Handler(
+                SentrySdk::getCurrentHub(),
+                Logger::toMonologLevel($this->monologConfiguration->getLogLevel())
+            ))
                 ->pushProcessor(new SentryExceptionProcessor())
-            )->setBuffering();
-        }
+        )->setBuffering();
     }
 
     public static function getPriority(): int

@@ -15,12 +15,12 @@
 
 declare(strict_types=1);
 
-namespace D3\OxLogIQ_Sentry\Tests\Providers;
+namespace D3\OxLogIQ_Sentry\Tests\Providers\Handlers;
 
 use D3\LoggerFactory\LoggerFactory;
 use D3\OxLogIQ\MonologConfiguration;
 use D3\OxLogIQ_Sentry\Configuration;
-use D3\OxLogIQ_Sentry\Providers\SentryHandlerProvider;
+use D3\OxLogIQ_Sentry\Providers\Handlers\Provider;
 use D3\TestingTools\Development\CanAccessRestricted;
 use Generator;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -31,32 +31,65 @@ use PHPUnit\Framework\TestCase;
 use ReflectionException;
 
 #[Small]
-#[CoversMethod(SentryHandlerProvider::class, 'register')]
+#[CoversMethod(Provider::class, 'isActive')]
+#[CoversMethod(Provider::class, 'provide')]
 class SentryHandlerProviderTest extends TestCase
 {
     use CanAccessRestricted;
 
     /**
      * @throws ReflectionException
+     * @dataProvider isActiveDataProvider
+     */
+    #[DataProvider('isActiveDataProvider')]
+    public function testIsActive($hasHttpEndpoint): void
+    {
+        $monologConfigurationMock = $this->getMockBuilder(MonologConfiguration::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $configurationMock = $this->getMockBuilder(Configuration::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['hasSentryDsn'])
+            ->getMock();
+        $configurationMock->expects(self::once())->method('hasSentryDsn')->willReturn($hasHttpEndpoint);
+
+        $sut = oxNew(Provider::class, $monologConfigurationMock, $configurationMock);
+
+        $this->assertSame(
+            $hasHttpEndpoint,
+            $this->callMethod(
+                $sut,
+                'isActive',
+            )
+        );
+    }
+
+    public static function isActiveDataProvider(): Generator
+    {
+        yield [false];
+        yield [true];
+    }
+
+    /**
+     * @throws ReflectionException
      */
     #[Test]
-    #[DataProvider('registerDataProvider')]
-    public function testRegister(bool $dsnGiven, int $invocation): void
+    public function testProvide(): void
     {
         $monologConfigurationMock = $this->getMockBuilder(MonologConfiguration::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getLogLevel'])
             ->getMock();
-        $monologConfigurationMock->expects(self::exactly($invocation))->method('getLogLevel')->willReturn('error');
+        $monologConfigurationMock->expects(self::exactly(2))->method('getLogLevel')->willReturn('error');
 
         $configurationMock = $this->getMockBuilder(Configuration::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['hasSentryDsn', 'getSentryOptions'])
+            ->onlyMethods(['getSentryOptions'])
             ->getMock();
-        $configurationMock->method('hasSentryDsn')->willReturn($dsnGiven);
         $configurationMock->method('getSentryOptions')->willReturn([]);
 
-        $sut = new SentryHandlerProvider(
+        $sut = new Provider(
             $monologConfigurationMock,
             $configurationMock,
         );
@@ -65,14 +98,8 @@ class SentryHandlerProviderTest extends TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['addOtherHandler'])
             ->getMock();
-        $factoryMock->expects(self::exactly($invocation))->method('addOtherHandler');
+        $factoryMock->expects(self::exactly(2))->method('addOtherHandler');
 
         $this->callMethod($sut, 'register', [$factoryMock]);
-    }
-
-    public static function registerDataProvider(): Generator
-    {
-        yield 'no dsn' => [false, 0];
-        yield 'given dsn' => [true, 2];
     }
 }
