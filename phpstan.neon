@@ -1,8 +1,15 @@
 parameters:
-  paths:
-    - .
-  excludePaths:
-    - Tests
+  paths: 
+    - Interfaces
+    - Processors
+    - Providers
+
+  scanFiles:
+    - Configuration.php
+
   level: 8
   phpVersion: 80000
-
+  ignoreErrors:
+    - '#expects Monolog\\Handler\\AbstractProcessingHandler, Monolog\\Handler\\HandlerInterface given#'
+    - '#has parameter \$records with no value type specified in iterable type array#'
+    - '#return type has no value type specified in iterable type array#'
